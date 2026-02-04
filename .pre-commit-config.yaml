@@ -56,4 +56,3 @@ repos:
       - id: eslint
         additional_dependencies:
           - eslint@8.56.0
-          
