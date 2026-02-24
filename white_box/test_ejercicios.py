@@ -561,3 +561,5 @@ class TestGetWeatherAdvisory(unittest.TestCase):
 
     def test_no_advisory_high_temp_low_humidity(self):
         self.assertEqual(get_weather_advisory(31, 70), "No Specific Advisory")
+
+
