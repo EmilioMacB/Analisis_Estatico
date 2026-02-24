@@ -7,6 +7,7 @@ import unittest
 
 from white_box.class_exercises import *
 
+
 class TestWhiteBox(unittest.TestCase):
     """
     White-box unittest class.
@@ -149,7 +150,7 @@ class TestValidPassword(unittest.TestCase):
         Checks if a fully compliant password returns True.
         """
         self.assertTrue(validate_password("ValidPassw0rd!"))
-        
+
 
 class TestCalculateTotalDiscount(unittest.TestCase):
     """
@@ -212,27 +213,27 @@ class TestCalculateItemsShippingCost(unittest.TestCase):
     """
 
     def test_shipping_standard_weight_under_5(self):
-        items = [{"weight": 2}, {"weight": 3}] # Total: 5
+        items = [{"weight": 2}, {"weight": 3}]  # Total: 5
         self.assertEqual(calculate_items_shipping_cost(items, "standard"), 10)
 
     def test_shipping_standard_weight_between_5_and_10(self):
-        items = [{"weight": 6}] # Total: 6
+        items = [{"weight": 6}]  # Total: 6
         self.assertEqual(calculate_items_shipping_cost(items, "standard"), 15)
 
     def test_shipping_standard_weight_over_10(self):
-        items = [{"weight": 11}] # Total: 11
+        items = [{"weight": 11}]  # Total: 11
         self.assertEqual(calculate_items_shipping_cost(items, "standard"), 20)
 
     def test_shipping_express_weight_under_5(self):
-        items = [{"weight": 4.9}] # Total: 4.9
+        items = [{"weight": 4.9}]  # Total: 4.9
         self.assertEqual(calculate_items_shipping_cost(items, "express"), 20)
 
     def test_shipping_express_weight_between_5_and_10(self):
-        items = [{"weight": 10}] # Total: 10
+        items = [{"weight": 10}]  # Total: 10
         self.assertEqual(calculate_items_shipping_cost(items, "express"), 30)
 
     def test_shipping_express_weight_over_10(self):
-        items = [{"weight": 10.1}] # Total: 10.1
+        items = [{"weight": 10.1}]  # Total: 10.1
         self.assertEqual(calculate_items_shipping_cost(items, "express"), 40)
 
     def test_shipping_invalid_method(self):
@@ -261,7 +262,9 @@ class TestValidateLogin(unittest.TestCase):
 
     def test_login_failed_username_too_long(self):
         # Username 21 chars
-        self.assertEqual(validate_login("thisusernameiswaytoolong", "password123"), "Login Failed")
+        self.assertEqual(
+            validate_login("thisusernameiswaytoolong", "password123"), "Login Failed"
+        )
 
 
 class TestVerifyAge(unittest.TestCase):
@@ -312,13 +315,15 @@ class TestValidateEmail(unittest.TestCase):
     """
 
     def test_email_valid(self):
-        self.assertEqual(validate_email("@.@.@"), "Valid Email") # 5 chars, contains @ and .
+        self.assertEqual(
+            validate_email("@.@.@"), "Valid Email"
+        )  # 5 chars, contains @ and .
 
     def test_email_too_short(self):
-        self.assertEqual(validate_email("a@b."), "Invalid Email") # 4 chars
+        self.assertEqual(validate_email("a@b."), "Invalid Email")  # 4 chars
 
     def test_email_too_long(self):
-        long_email = "a" * 50 + "@hola.com" # 59 chars
+        long_email = "a" * 50 + "@hola.com"  # 59 chars
         self.assertEqual(validate_email(long_email), "Invalid Email")
 
     def test_email_missing_at_symbol(self):
@@ -344,21 +349,29 @@ class TestCelsiusToFahrenheit(unittest.TestCase):
     def test_celsius_above_upper_boundary(self):
         self.assertEqual(celsius_to_fahrenheit(101), "Invalid Temperature")
 
-    
+
 class TestValidateCreditCard(unittest.TestCase):
     """
     White-box unittest class for validate_credit_card function.
     """
 
     def test_card_valid_length(self):
-        self.assertEqual(validate_credit_card("1234567890123"), "Valid Card") # 13 chars
-        self.assertEqual(validate_credit_card("1234567890123456"), "Valid Card") # 16 chars
+        self.assertEqual(
+            validate_credit_card("1234567890123"), "Valid Card"
+        )  # 13 chars
+        self.assertEqual(
+            validate_credit_card("1234567890123456"), "Valid Card"
+        )  # 16 chars
 
     def test_card_too_short(self):
-        self.assertEqual(validate_credit_card("123456789012"), "Invalid Card") # 12 chars
+        self.assertEqual(
+            validate_credit_card("123456789012"), "Invalid Card"
+        )  # 12 chars
 
     def test_card_too_long(self):
-        self.assertEqual(validate_credit_card("12345678901234567"), "Invalid Card") # 17 chars
+        self.assertEqual(
+            validate_credit_card("12345678901234567"), "Invalid Card"
+        )  # 17 chars
 
     def test_card_contains_non_digits(self):
         self.assertEqual(validate_credit_card("123456789012a"), "Invalid Card")
@@ -417,13 +430,13 @@ class TestValidateUrl(unittest.TestCase):
         self.assertEqual(validate_url("ftp://example.com"), "Invalid URL")
 
     def test_url_http_too_long(self):
-        long_url = "http://" + "a" * 249 # 256 chars
+        long_url = "http://" + "a" * 249  # 256 chars
         self.assertEqual(validate_url(long_url), "Invalid URL")
 
     def test_url_https_too_long(self):
         # Aqui parece que hay un error con la prueba del archivo de class_excercises por el tema de precedencia de operadores. esto me lo dio chat
         # por lo tanto esta prueba da error
-        long_url = "https://" + "a" * 249 # 257 chars
+        long_url = "https://" + "a" * 249  # 257 chars
         self.assertEqual(validate_url(long_url), "Invalid URL")
 
 
@@ -503,7 +516,7 @@ class TestCalculateShippingCost(unittest.TestCase):
     def test_large_package_heavy(self):
         # Falla las primeras condiciones por el peso > 5
         self.assertEqual(calculate_shipping_cost(6, 15, 15, 15), 20)
-        
+
     def test_large_package_oversized(self):
         # Falla las segundas condiciones por el largo > 30
         self.assertEqual(calculate_shipping_cost(2, 31, 15, 15), 20)
@@ -551,7 +564,10 @@ class TestGetWeatherAdvisory(unittest.TestCase):
     """
 
     def test_high_temp_and_humidity(self):
-        self.assertEqual(get_weather_advisory(31, 71), "High Temperature and Humidity. Stay Hydrated.")
+        self.assertEqual(
+            get_weather_advisory(31, 71),
+            "High Temperature and Humidity. Stay Hydrated.",
+        )
 
     def test_low_temperature(self):
         self.assertEqual(get_weather_advisory(-1, 50), "Low Temperature. Bundle Up!")
@@ -561,5 +577,3 @@ class TestGetWeatherAdvisory(unittest.TestCase):
 
     def test_no_advisory_high_temp_low_humidity(self):
         self.assertEqual(get_weather_advisory(31, 70), "No Specific Advisory")
-
-
