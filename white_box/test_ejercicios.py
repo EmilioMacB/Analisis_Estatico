@@ -433,9 +433,9 @@ class TestValidateUrl(unittest.TestCase):
         long_url = "http://" + "a" * 249  # 256 chars
         self.assertEqual(validate_url(long_url), "Invalid URL")
 
-    #def test_url_https_too_long(self):
-        # Aqui parece que hay un error con la prueba del archivo de class_excercises por el tema de precedencia de operadores. esto me lo dio chat
-        # por lo tanto esta prueba da error
+    # def test_url_https_too_long(self):
+    # Aqui parece que hay un error con la prueba del archivo de class_excercises por el tema de precedencia de operadores. esto me lo dio chat
+    # por lo tanto esta prueba da error
     #    long_url = "https://" + "a" * 249  # 257 chars
     #    self.assertEqual(validate_url(long_url), "Invalid URL")
 
@@ -457,8 +457,8 @@ class TestCalculateQuantityDiscount(unittest.TestCase):
         self.assertEqual(calculate_quantity_discount(11), "10% Discount")
 
     # def test_invalid_quantity_zero_or_negative(self):
-        # Esta prueba falla porque quantity = 0 da 10% Discount en lugar de "Invalid Quantity" y quantity negativo también da 10% Discount
-        # pero en realidad no le puedes poner descuento a una cantidad negativa o a 0, por lo tanto esta prueba es válida para detectar un error en la función.
+    # Esta prueba falla porque quantity = 0 da 10% Discount en lugar de "Invalid Quantity" y quantity negativo también da 10% Discount
+    # pero en realidad no le puedes poner descuento a una cantidad negativa o a 0, por lo tanto esta prueba es válida para detectar un error en la función.
     #    self.assertEqual(calculate_quantity_discount(0), "Invalid Quantity")
     #   self.assertEqual(calculate_quantity_discount(-5), "Invalid Quantity")
 
