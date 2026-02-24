@@ -361,3 +361,4 @@ def get_weather_advisory(temperature, humidity):
         return "Low Temperature. Bundle Up!"
 
     return "No Specific Advisory"
+
