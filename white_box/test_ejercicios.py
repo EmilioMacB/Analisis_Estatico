@@ -4,10 +4,15 @@
 White-box unit testing examples.
 """
 import unittest
+from unittest.mock import MagicMock, patch
 
 from white_box.class_exercises import (
+    BankAccount,
+    BankingSystem,
     DocumentEditingSystem,
     ElevatorSystem,
+    Product,
+    ShoppingCart,
     TrafficLight,
     UserAuthentication,
     VendingMachine,
@@ -880,3 +885,233 @@ class TestElevatorSystem(unittest.TestCase):
         result = self.elevator.stop()
         self.assertEqual(result, "Invalid operation in current state")
         self.assertEqual(self.elevator.state, "Idle")
+
+
+class TestBankAccount(unittest.TestCase):
+
+    @patch("builtins.print")
+    def test_view_account(self, mock_print):
+        """Verifica que se imprima correctamente el estado de la cuenta."""
+        account = BankAccount("12345", 500)
+        account.view_account()
+
+        # Verificamos que print fue llamado exactamente con este texto
+        mock_print.assert_called_once_with("The account 12345 has a balance of 500")
+
+
+class TestBankingSystem(unittest.TestCase):
+    """
+    White-box unittest class for BankingSystem class.
+    """
+
+    def setUp(self):
+        self.bank = BankingSystem()
+
+    # --- PRUEBAS PARA AUTHENTICATE ---
+
+    @patch("builtins.print")
+    def test_authenticate_success(self, mock_print):
+        """Checks successful login."""
+        result = self.bank.authenticate("user123", "pass123")
+        self.assertTrue(result)
+        mock_print.assert_called_with("User user123 authenticated successfully.")
+
+    @patch("builtins.print")
+    def test_authenticate_already_logged_in(self, mock_print):
+        """Checks login attempt when user is already logged in."""
+        self.bank.logged_in_users.add("user123")
+        result = self.bank.authenticate("user123", "pass123")
+        self.assertFalse(result)
+        mock_print.assert_called_with("User already logged in.")
+
+    @patch("builtins.print")
+    def test_authenticate_failed(self, mock_print):
+        """Checks login with wrong credentials."""
+        result = self.bank.authenticate("user123", "wrong_password")
+        self.assertFalse(result)
+        mock_print.assert_called_with("Authentication failed.")
+
+    # --- PRUEBAS PARA TRANSFER_MONEY ---
+
+    @patch("builtins.print")
+    def test_transfer_not_authenticated(self, mock_print):
+        """Checks transfer fails if sender is not logged in."""
+        # No agregamos al usuario a logged_in_users
+        result = self.bank.transfer_money("user123", "receiver99", 100, "regular")
+        self.assertFalse(result)
+        mock_print.assert_called_with("Sender not authenticated.")
+
+    @patch("builtins.print")
+    def test_transfer_invalid_transaction_type(self, mock_print):
+        """Checks transfer fails with unknown transaction type."""
+        self.bank.logged_in_users.add("user123")
+        result = self.bank.transfer_money("user123", "receiver99", 100, "crypto")
+        self.assertFalse(result)
+        mock_print.assert_called_with("Invalid transaction type.")
+
+    @patch("white_box.class_exercises.BankAccount")
+    @patch("builtins.print")
+    def test_transfer_insufficient_funds(self, mock_print, mock_bank_account_class):
+        """Checks transfer fails when balance is lower than amount + fee."""
+        self.bank.logged_in_users.add("user123")
+
+        # Mockeamos una cuenta con balance bajo (10)
+        mock_instance = mock_bank_account_class.return_value
+        mock_instance.balance = 10
+
+        result = self.bank.transfer_money("user123", "receiver99", 50, "regular")
+        self.assertFalse(result)
+        mock_print.assert_called_with("Insufficient funds.")
+
+    @patch("white_box.class_exercises.BankAccount")
+    @patch("builtins.print")
+    def test_transfer_success_regular(self, mock_print, mock_bank_account_class):
+        """Checks successful regular transfer."""
+        self.bank.logged_in_users.add("user123")
+
+        # Mockeamos una cuenta con balance alto
+        mock_instance = mock_bank_account_class.return_value
+        mock_instance.balance = 5000
+
+        result = self.bank.transfer_money("user123", "receiver99", 100, "regular")
+        self.assertTrue(result)
+        mock_print.assert_called_with(
+            "Money transfer of $100 (regular transfer) from user123 to receiver99 processed successfully."
+        )
+
+    @patch("white_box.class_exercises.BankAccount")
+    @patch("builtins.print")
+    def test_transfer_success_express(self, mock_print, mock_bank_account_class):
+        """Checks successful express transfer."""
+        self.bank.logged_in_users.add("user123")
+
+        mock_instance = mock_bank_account_class.return_value
+        mock_instance.balance = 5000
+
+        result = self.bank.transfer_money("user123", "receiver99", 100, "express")
+        self.assertTrue(result)
+        mock_print.assert_called_with(
+            "Money transfer of $100 (express transfer) from user123 to receiver99 processed successfully."
+        )
+
+    @patch("white_box.class_exercises.BankAccount")
+    @patch("builtins.print")
+    def test_transfer_success_scheduled(self, mock_print, mock_bank_account_class):
+        """Checks successful scheduled transfer."""
+        self.bank.logged_in_users.add("user123")
+
+        mock_instance = mock_bank_account_class.return_value
+        mock_instance.balance = 5000
+
+        result = self.bank.transfer_money("user123", "receiver99", 100, "scheduled")
+        self.assertTrue(result)
+        mock_print.assert_called_with(
+            "Money transfer of $100 (scheduled transfer) from user123 to receiver99 processed successfully."
+        )
+
+
+class TestProduct(unittest.TestCase):
+
+    @patch("builtins.print")
+    def test_view_product(self, mock_print):
+        """Verifica que se vea correctamente los detalles del producto."""
+
+        prod = Product("Laptop", 1000)
+        result = prod.view_product()
+
+        expected_msg = "The product Laptop has a price of 1000"
+        self.assertEqual(result, expected_msg)
+        mock_print.assert_called_once_with(expected_msg)
+
+
+class TestShoppingCart(unittest.TestCase):
+    """
+    White-box unittest class for ShoppingCart class.
+    """
+
+    def setUp(self):
+        self.cart = ShoppingCart()
+
+        # 1. Arrange: Creamos Mocks de productos
+        self.mock_apple = MagicMock()
+        self.mock_apple.name = "Apple"
+        self.mock_apple.price = 2.0
+
+        self.mock_banana = MagicMock()
+        self.mock_banana.name = "Banana"
+        self.mock_banana.price = 1.5
+
+    # --- PRUEBAS PARA ADD_PRODUCT ---
+
+    def test_add_product_new_item(self):
+        """Checks adding a completely new product (hits the 'else' of the 'for' loop)."""
+        self.cart.add_product(self.mock_apple, 3)
+        self.assertEqual(len(self.cart.items), 1)
+        self.assertEqual(self.cart.items[0]["product"], self.mock_apple)
+        self.assertEqual(self.cart.items[0]["quantity"], 3)
+
+    def test_add_product_existing_item(self):
+        """Checks adding quantity to an already existing product (hits the 'if' and 'break')."""
+
+        self.cart.add_product(self.mock_apple, 2)
+        # Volvemos a agregar el mismo producto
+        self.cart.add_product(self.mock_apple, 3)
+
+        self.assertEqual(len(self.cart.items), 1)  # Sigue habiendo 1 solo tipo de item
+        self.assertEqual(self.cart.items[0]["quantity"], 5)  # 2 + 3
+
+    # --- PRUEBAS PARA REMOVE_PRODUCT ---
+
+    def test_remove_product_partial_quantity(self):
+        """Checks removing less quantity than currently in cart (hits the 'else' inside the 'if')."""
+        self.cart.add_product(self.mock_apple, 5)
+        self.cart.remove_product(self.mock_apple, 2)
+
+        self.assertEqual(len(self.cart.items), 1)
+        self.assertEqual(self.cart.items[0]["quantity"], 3)  # 5 - 2
+
+    def test_remove_product_full_quantity(self):
+        """Checks removing exactly or more than the current quantity (hits the 'if quantity <=')."""
+        self.cart.add_product(self.mock_apple, 2)
+        self.cart.remove_product(self.mock_apple, 2)  # Removemos todo
+
+        self.assertEqual(len(self.cart.items), 0)  # El carrito debe quedar vacío
+
+    def test_remove_product_more_than_exists(self):
+        """Checks removing more quantity than what exists also removes the item entirely."""
+        self.cart.add_product(self.mock_apple, 2)
+        self.cart.remove_product(self.mock_apple, 10)  # Intentamos remover de más
+
+        self.assertEqual(len(self.cart.items), 0)
+
+    def test_remove_product_not_in_cart(self):
+        """Checks that trying to remove a non-existent product does not throw errors."""
+        self.cart.add_product(self.mock_apple, 2)
+        # Intentamos remover plátanos que no están en el carrito
+        self.cart.remove_product(self.mock_banana, 1)
+
+        self.assertEqual(len(self.cart.items), 1)  # Las manzanas siguen intactas
+        self.assertEqual(self.cart.items[0]["quantity"], 2)
+
+    # --- PRUEBAS PARA VIEW_CART Y CHECKOUT ---
+
+    @patch("builtins.print")
+    def test_view_cart(self, mock_print):
+        """Checks if view_cart prints the right string format."""
+        self.cart.add_product(self.mock_apple, 3)  # 3 x 2.0 = 6.0
+        self.cart.view_cart()
+
+        mock_print.assert_called_once_with("3 x Apple - $6.0")
+
+    @patch("builtins.print")
+    def test_checkout(self, mock_print):
+        """Checks the total sum calculation during checkout using Mocks."""
+        self.cart.add_product(self.mock_apple, 2)  # 2 x 2.0 = 4.0
+        self.cart.add_product(self.mock_banana, 2)  # 2 x 1.5 = 3.0
+        # Total esperado = 7.0
+
+        self.cart.checkout()
+
+        # Validamos que se llamaron los dos prints exactos
+        mock_print.assert_any_call("Total: $7.0")
+        mock_print.assert_any_call("Checkout completed. Thank you for shopping!")
