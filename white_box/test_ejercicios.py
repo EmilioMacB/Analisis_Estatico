@@ -1,4 +1,6 @@
+# pylint: disable=too-many-lines
 # -*- coding: utf-8 -*-
+
 
 """
 White-box unit testing examples.
@@ -888,6 +890,9 @@ class TestElevatorSystem(unittest.TestCase):
 
 
 class TestBankAccount(unittest.TestCase):
+    """
+    White-box unittest class for BankAccount class.
+    """
 
     @patch("builtins.print")
     def test_view_account(self, mock_print):
@@ -976,7 +981,8 @@ class TestBankingSystem(unittest.TestCase):
         result = self.bank.transfer_money("user123", "receiver99", 100, "regular")
         self.assertTrue(result)
         mock_print.assert_called_with(
-            "Money transfer of $100 (regular transfer) from user123 to receiver99 processed successfully."
+            "Money transfer of $100 (regular transfer) from"
+            " user123 to receiver99 processed successfully."
         )
 
     @patch("white_box.class_exercises.BankAccount")
@@ -991,7 +997,8 @@ class TestBankingSystem(unittest.TestCase):
         result = self.bank.transfer_money("user123", "receiver99", 100, "express")
         self.assertTrue(result)
         mock_print.assert_called_with(
-            "Money transfer of $100 (express transfer) from user123 to receiver99 processed successfully."
+            "Money transfer of $100 (express transfer) from"
+            " user123 to receiver99 processed successfully."
         )
 
     @patch("white_box.class_exercises.BankAccount")
@@ -1006,11 +1013,15 @@ class TestBankingSystem(unittest.TestCase):
         result = self.bank.transfer_money("user123", "receiver99", 100, "scheduled")
         self.assertTrue(result)
         mock_print.assert_called_with(
-            "Money transfer of $100 (scheduled transfer) from user123 to receiver99 processed successfully."
+            "Money transfer of $100 (scheduled transfer) from"
+            " user123 to receiver99 processed successfully."
         )
 
 
 class TestProduct(unittest.TestCase):
+    """
+    White-box unittest class for Product class.
+    """
 
     @patch("builtins.print")
     def test_view_product(self, mock_print):
@@ -1063,7 +1074,7 @@ class TestShoppingCart(unittest.TestCase):
     # --- PRUEBAS PARA REMOVE_PRODUCT ---
 
     def test_remove_product_partial_quantity(self):
-        """Checks removing less quantity than currently in cart (hits the 'else' inside the 'if')."""
+        """Checks removing less quantity than currently in cart."""
         self.cart.add_product(self.mock_apple, 5)
         self.cart.remove_product(self.mock_apple, 2)
 
@@ -1071,7 +1082,7 @@ class TestShoppingCart(unittest.TestCase):
         self.assertEqual(self.cart.items[0]["quantity"], 3)  # 5 - 2
 
     def test_remove_product_full_quantity(self):
-        """Checks removing exactly or more than the current quantity (hits the 'if quantity <=')."""
+        """Checks removing exactly or more than the current quantity."""
         self.cart.add_product(self.mock_apple, 2)
         self.cart.remove_product(self.mock_apple, 2)  # Removemos todo
 
